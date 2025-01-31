@@ -25,22 +25,33 @@ services:
     environment:
       - DB_HOST=db
       - DB_USER=root
-      - DB_PASSWORD=password
+      - DB_PASSWORD=
       - DB_NAME=apiroq
     depends_on:
       - db
   db:
     image: mysql:8.0
     restart: always
+    command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes" 
       MYSQL_DATABASE: apiroq
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - "8080:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=
+    depends_on:
+      - db
 
 volumes:
   mysql_data:
